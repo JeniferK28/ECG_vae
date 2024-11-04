@@ -16,5 +16,5 @@
 * utils.py
 
 ## Results
-<img src="network.JPG" width=80% height=80%>
+<img src="network.jpg" width=80% height=80%>
 <img src="distribution.png" width=80% height=80%>
