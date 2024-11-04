@@ -46,7 +46,7 @@ if __name__ == '__main__':
     test_label = [np.argmax(i) for i in test_label]
     test_data = [np.reshape(i, (1, 1, 256)) for i in testdata]
 
-
+    # Split train and val data
     X_train, X_val, y_train, y_val = train_test_split(train_data, train_label, test_size=args.split_size, random_state=42)
 
     train_label= Variable(Tensor(y_train)).type(torch.LongTensor)
@@ -56,7 +56,6 @@ if __name__ == '__main__':
     train_data = torch.utils.data.TensorDataset(Tensor(X_train), train_label)
     val_data = torch.utils.data.TensorDataset(Tensor(X_val), val_label)
     test_data = torch.utils.data.TensorDataset(Tensor(test_data), test_label)
-
 
     train_loader=DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
     val_loader=DataLoader(val_data, batch_size=args.batch_size, shuffle=True)
@@ -69,6 +68,7 @@ if __name__ == '__main__':
     encoder, decoder =  Q_net(), P_net()     # Encoder/Decoder
     Disc = D_net_gauss()                # Discriminator adversarial
 
+    # Send models to gpu 
     if torch.cuda.is_available():
         encoder = encoder.cuda()
         decoder = decoder.cuda()
@@ -143,28 +143,3 @@ if __name__ == '__main__':
     print('[TP] {}\t[FP] {}\t[MISSED] {}'.format(tp, fp, total_anom - tp))
     print('[FN] {}\t[TN] {}'.format(fn, tn))
 
-    c1_loss=[]
-    c2_loss=[]
-    c3_loss=[]
-    c4_loss=[]
-    c5_loss=[]
-    c0_loss=[]
-
-    for i in range(len(test_loss)):
-         if test_labels[i]==1:
-             c1_loss.append(test_loss[i])
-         elif test_labels[i]==2:
-             c2_loss.append(test_loss[i])
-         elif test_labels[i]==3:
-             c3_loss.append(test_loss[i])
-         elif test_labels[i] == 4: c4_loss.append(test_loss[i])
-         elif test_labels[i] == 5: c5_loss.append(test_loss[i])
-         else: c0_loss.append(test_loss[i])
-
-    print(np.median(c1_loss), np.median(c2_loss),np.median(c3_loss), np.median(c4_loss),np.median(c5_loss), np.median(c0_loss))
-    print(np.mean(c1_loss),np.mean(c2_loss),np.mean(c3_loss),np.mean(c4_loss),np.mean(c5_loss),np.mean(c0_loss) )
-
-    #save the Encoder
-    #torch.save(encoder.state_dict(),Model_dir + 'encoder_z'+ str(args.dim_z)+'_epch'+str(args.epochs)+'.pt')
-    #torch.save(decoder.state_dict(),Model_dir +'decoder_z'+ str(args.dim_z)+'_epch'+str(args.epochs)+'.pt')
-    #torch.save(Disc.state_dict(),Model_dir +'disc_z'+ str(args.dim_z)+'_epch'+str(args.epochs)+'.pt')
